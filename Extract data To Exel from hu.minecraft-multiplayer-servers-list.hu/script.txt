@@ -1,0 +1,13 @@
+WebAutomation.LaunchEdge.LaunchEdge Url: $'''https://hu.minecraft-multiplayer-servers-list.com/?list=n''' WindowState: WebAutomation.BrowserWindowState.Normal ClearCache: False ClearCookies: False WaitForPageToLoadTimeout: 60 Timeout: 60 BrowserInstance=> Browser
+Excel.LaunchExcel.LaunchUnderExistingProcess Visible: True Instance=> ExcelInstance_Mc
+SET i TO 1
+LOOP LoopIndex FROM 1 TO 763 STEP 1
+    WebAutomation.ExtractData.ExtractList BrowserInstance: Browser Control: $'''html > body > article > div''' ExtractionParameters: {[$'''div > input''', $'''Own Text''', $''''''] } PostProcessData: False TimeoutInSeconds: 60 ExtractedData=> DataFromWebPage
+    LOOP FOREACH CurrentItem IN DataFromWebPage
+        Excel.WriteToExcel.WriteCell Instance: ExcelInstance_Mc Value: CurrentItem Column: $'''A''' Row: i
+        Variables.IncreaseVariable Value: i IncrementValue: 1
+    END
+    DISABLE Excel.AddWorksheet Instance: ExcelInstance_Mc Name: LoopIndex WorksheetPosition: Excel.WorksheetPosition.Last
+    WebAutomation.GoToWebPage.GoToWebPage BrowserInstance: Browser Url: $'''https://hu.minecraft-multiplayer-servers-list.com/?p=%LoopIndex%&list=n''' WaitForPageToLoadTimeout: 60
+END
+Excel.SaveExcel.Save Instance: ExcelInstance_Mc
